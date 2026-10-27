@@ -19,7 +19,7 @@ function formatWeekRange(weekStart: Date): string {
 
 export function App() {
   const { userId, me, users, error } = useCurrentUser();
-  const { events, loading, error: eventsError, ...actions } = useEvents(userId);
+  const { events, loading, stale, refresh, ...actions } = useEvents(userId);
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [editing, setEditing] = useState<Editing>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
@@ -66,14 +66,20 @@ export function App() {
           </button>
           <h2>{formatWeekRange(weekStart)}</h2>
         </div>
-        <button className="primary" onClick={() => setEditing({ mode: 'create' })}>
-          + New event
-        </button>
+        <div className="toolbar-actions">
+          <button onClick={() => void refresh()}>Refresh</button>
+          <button className="primary" onClick={() => setEditing({ mode: 'create' })}>
+            + New event
+          </button>
+        </div>
       </div>
 
-      <Notices confirmation={confirmation} onDismissConfirmation={() => setConfirmation(null)} />
+      <Notices
+        confirmation={confirmation}
+        stale={stale}
+        onDismissConfirmation={() => setConfirmation(null)}
+      />
 
-      {eventsError && <p className="error">Could not load events: {eventsError}</p>}
       {loading ? (
         <p className="page-message">Loading events…</p>
       ) : (

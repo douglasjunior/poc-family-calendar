@@ -26,4 +26,11 @@ describe('events repository', () => {
     const coachEvents = await listEventsForUser('coach');
     expect(coachEvents.map((e) => e.id)).not.toContain(event.id);
   });
+
+  it('AC-6: does not return an event of Soccer team to Dad', async () => {
+    const practice = await createEvent({ ...movieNight, title: 'Practice', groupId: 'soccer' }, 'coach');
+
+    const dadEvents = await listEventsForUser('dad');
+    expect(dadEvents.map((e) => e.id)).not.toContain(practice.id);
+  });
 });
