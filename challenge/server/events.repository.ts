@@ -31,14 +31,6 @@ export async function findEvent(id: number): Promise<CalendarEvent | undefined> 
   return rows[0];
 }
 
-export async function findRecentGroupId(userId: string): Promise<string | null> {
-  const { rows } = await pool.query<{ group_id: string }>(
-    'SELECT group_id FROM events WHERE created_by = $1 ORDER BY created_at DESC LIMIT 1',
-    [userId],
-  );
-  return rows[0]?.group_id ?? null;
-}
-
 export async function createEvent(input: EventInput, createdBy: string): Promise<CalendarEvent> {
   const { rows } = await pool.query<CalendarEvent>(
     `INSERT INTO events (title, starts_at, ends_at, group_id, notes, created_by)

@@ -65,7 +65,7 @@ An event is visible to every member of its group and to nobody else (existing be
 | AC-4 | Given Son picks Family and saves "Dentist", when the save succeeds, then he sees "Added to Family · visible to Dad, Mom, Son" (members in alphabetical order) and the event is on his calendar. | BR-3 |
 | AC-5 | Given Mom has the calendar open on that week, when Son saves "Dentist" in Family, then within 10 seconds it appears on Mom's screen without a reload. | BR-4 |
 | AC-6 | Given Dad has the calendar open, when Coach edits a Soccer team event, then Dad's screen is unchanged (he is not in the group) and shows no mark or notice. | BR-4 |
-| AC-7 | Given a parent has the calendar open, when Coach changes a practice from 5:00 PM to 6:00 PM, then within 10 seconds the parent's calendar shows the practice at 6:00 PM. | BR-4 |
+| AC-7 | Given Son has the calendar open, when Coach changes a practice from 5:00 PM to 6:00 PM, then within 10 seconds Son's calendar shows the practice at 6:00 PM. | BR-4 |
 | AC-8 | Given Mom's calendar has not updated yet, when she presses Refresh, then the latest events show immediately, without a page reload. | BR-5 |
 | AC-9 | Given Mom has seen the calendar before, when Son adds "Dentist" to Family, then on Mom's screen the event shows a **New** mark. | BR-6 |
 | AC-10 | Given Mom has seen "Dinner" before, when Dad edits its time, then it shows an **Updated** mark on Mom's screen. | BR-7 |
@@ -100,6 +100,7 @@ An event is visible to every member of its group and to nobody else (existing be
 - **Q7 · Seen marks** — Where is "already seen" remembered? → Decision: per browser only.
 - **Q8 · Assumptions** — Approve A-1 to A-8? → Decision: approve all.
 - **Q9 · Member order** — In what order are the people named in the save confirmation (BR-3)? → Decision: alphabetical by name; AC-4 updated accordingly.
+- **Q10 · Who sees a practice change** — AC-7 named "a parent", but parents are not in Soccer team and never see practices. → Decision: AC-7 uses Son, the only app user who sees both the Coach's changes and the family's events.
 
 ## Approved assumptions
 

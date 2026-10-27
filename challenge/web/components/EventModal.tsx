@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { fromInputValues, toDateInputValue, toTimeInputValue } from '../../shared/dates';
 import type { CalendarEvent, EventInput, Me, User } from '../../shared/types';
+import { initialGroupId, validateGroupChoice } from '../group-choice';
 
 type Props = {
   event: CalendarEvent | null;
@@ -27,9 +28,7 @@ export function EventModal({ event, me, users, initialDate, onSave, onDelete, on
   const [date, setDate] = useState(toDateInputValue(start));
   const [startTime, setStartTime] = useState(toTimeInputValue(start));
   const [endTime, setEndTime] = useState(toTimeInputValue(end));
-  const [groupId, setGroupId] = useState(
-    event?.groupId ?? me.recentGroupId ?? me.groups[0]?.id ?? '',
-  );
+  const [groupId, setGroupId] = useState(event?.groupId ?? initialGroupId(me.groups));
   const [notes, setNotes] = useState(event?.notes ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +52,11 @@ export function EventModal({ event, me, users, initialDate, onSave, onDelete, on
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const groupError = validateGroupChoice(groupId);
+    if (groupError) {
+      setError(groupError);
+      return;
+    }
     const startsAt = fromInputValues(date, startTime);
     const endsAt = fromInputValues(date, endTime);
     if (endsAt <= startsAt) {
@@ -100,6 +104,11 @@ export function EventModal({ event, me, users, initialDate, onSave, onDelete, on
         <label>
           Group
           <select value={groupId} onChange={(e) => setGroupId(e.target.value)}>
+            {groupId === '' && (
+              <option value="" disabled>
+                Choose a group
+              </option>
+            )}
             {me.groups.map((group) => (
               <option key={group.id} value={group.id}>
                 {group.name}
@@ -114,7 +123,11 @@ export function EventModal({ event, me, users, initialDate, onSave, onDelete, on
         </label>
 
         {author && <p className="muted">Added by {author.name}</p>}
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="modal-actions">
           {event && (
