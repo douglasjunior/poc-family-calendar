@@ -1,4 +1,4 @@
-import type { Group, User } from '../shared/types';
+import type { GroupWithMembers, User } from '../shared/types';
 import { pool } from './db';
 
 export async function listUsers(): Promise<User[]> {
@@ -11,9 +11,13 @@ export async function findUser(id: string): Promise<User | undefined> {
   return rows[0];
 }
 
-export async function listGroupsForUser(userId: string): Promise<Group[]> {
-  const { rows } = await pool.query<Group>(
-    `SELECT g.id, g.name, g.color
+export async function listGroupsForUser(userId: string): Promise<GroupWithMembers[]> {
+  const { rows } = await pool.query<GroupWithMembers>(
+    `SELECT g.id, g.name, g.color,
+            (SELECT json_agg(json_build_object('id', u.id, 'name', u.name) ORDER BY u.name)
+               FROM group_members gm
+               JOIN users u ON u.id = gm.user_id
+              WHERE gm.group_id = g.id) AS members
        FROM groups g
        JOIN group_members m ON m.group_id = g.id
       WHERE m.user_id = $1

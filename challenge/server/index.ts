@@ -1,5 +1,5 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
-import type { EventInput } from '../shared/types';
+import { parseEventInput } from './event-input';
 import * as events from './events.repository';
 import * as users from './users.repository';
 
@@ -23,11 +23,7 @@ app.get('/api/me', async (req, res) => {
     res.status(404).json({ error: 'Unknown user' });
     return;
   }
-  const [groups, recentGroupId] = await Promise.all([
-    users.listGroupsForUser(user.id),
-    events.findRecentGroupId(user.id),
-  ]);
-  res.json({ user, groups, recentGroupId });
+  res.json({ user, groups: await users.listGroupsForUser(user.id) });
 });
 
 app.get('/api/events', async (req, res) => {
@@ -81,26 +77,6 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).json({ error: 'Something went wrong' });
 });
-
-// Returns the validated input, or an error message.
-function parseEventInput(body: unknown): EventInput | string {
-  const { title, startsAt, endsAt, groupId, notes } = (body ?? {}) as Record<string, unknown>;
-
-  if (typeof title !== 'string' || title.trim() === '') return 'Title is required';
-  if (typeof groupId !== 'string' || groupId === '') return 'Group is required';
-  if (typeof startsAt !== 'string' || Number.isNaN(Date.parse(startsAt))) return 'Invalid start';
-  if (typeof endsAt !== 'string' || Number.isNaN(Date.parse(endsAt))) return 'Invalid end';
-  if (Date.parse(endsAt) <= Date.parse(startsAt)) return 'End must be after start';
-  if (notes != null && typeof notes !== 'string') return 'Invalid notes';
-
-  return {
-    title: title.trim(),
-    startsAt,
-    endsAt,
-    groupId,
-    notes: notes?.trim() || null,
-  };
-}
 
 app.listen(PORT, () => {
   console.log(`API listening on http://localhost:${PORT}`);

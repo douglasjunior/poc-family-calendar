@@ -3,9 +3,11 @@ import { addDays, isSameDay, startOfWeek } from '../shared/dates';
 import type { CalendarEvent, EventInput } from '../shared/types';
 import { EventModal } from './components/EventModal';
 import { Header } from './components/Header';
+import { Notices } from './components/Notices';
 import { WeekView } from './components/WeekView';
 import { useCurrentUser } from './hooks/useCurrentUser';
 import { useEvents } from './hooks/useEvents';
+import { formatSaveConfirmation } from './save-confirmation';
 
 type Editing = { mode: 'create' } | { mode: 'edit'; event: CalendarEvent } | null;
 
@@ -20,6 +22,7 @@ export function App() {
   const { events, loading, error: eventsError, ...actions } = useEvents(userId);
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [editing, setEditing] = useState<Editing>(null);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
 
   if (error) return <p className="page-message">Could not load calendar: {error}</p>;
   if (!me) return <p className="page-message">Loading…</p>;
@@ -28,16 +31,20 @@ export function App() {
   const isCurrentWeek = isSameDay(weekStart, startOfWeek(today));
 
   async function handleSave(input: EventInput) {
+    setConfirmation(null);
     if (editing?.mode === 'edit') {
       await actions.updateEvent(editing.event.id, input);
     } else {
       await actions.createEvent(input);
+      const group = me?.groups.find((candidate) => candidate.id === input.groupId);
+      setConfirmation(group ? formatSaveConfirmation(group) : null);
     }
     setEditing(null);
   }
 
   async function handleDelete() {
     if (editing?.mode !== 'edit') return;
+    setConfirmation(null);
     await actions.deleteEvent(editing.event.id);
     setEditing(null);
   }
@@ -63,6 +70,8 @@ export function App() {
           + New event
         </button>
       </div>
+
+      <Notices confirmation={confirmation} onDismissConfirmation={() => setConfirmation(null)} />
 
       {eventsError && <p className="error">Could not load events: {eventsError}</p>}
       {loading ? (

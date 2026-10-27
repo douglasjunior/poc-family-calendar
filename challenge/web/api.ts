@@ -4,6 +4,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
+  }).catch(() => {
+    throw new Error('Could not reach the server');
   });
   if (!res.ok) {
     const body = await res.json().catch(() => null);

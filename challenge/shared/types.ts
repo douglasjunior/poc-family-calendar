@@ -9,6 +9,8 @@ export type Group = {
   color: string;
 };
 
+export type GroupWithMembers = Group & { members: User[] };
+
 export type CalendarEvent = {
   id: number;
   title: string;
@@ -30,6 +32,5 @@ export type EventInput = {
 
 export type Me = {
   user: User;
-  groups: Group[];
-  recentGroupId: string | null;
+  groups: GroupWithMembers[];
 };

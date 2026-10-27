@@ -280,3 +280,39 @@ button.danger {
 .spacer {
   flex: 1;
 }
+
+/* Notices */
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 12px 16px;
+  border: 1px solid #86efac;
+  border-left: 6px solid #16a34a;
+  border-radius: 6px;
+  background: #f0fdf4;
+  color: #14532d;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notice::before {
+  content: '✓';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.notice span {
+  flex: 1;
+}
+
+.notice button {
+  border-color: transparent;
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+}
