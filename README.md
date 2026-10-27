@@ -1,4 +1,4 @@
-# CreteSuite hiring challenge: Family Calendar (internal)
+# Family Calendar POC
 
 This repo is internal. Never share it as-is.
 
