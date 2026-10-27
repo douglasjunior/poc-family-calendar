@@ -123,6 +123,11 @@ button.danger {
   padding: 16px 0;
 }
 
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .week-nav {
   display: flex;
   align-items: center;
@@ -315,4 +320,15 @@ button.danger {
   color: inherit;
   font-size: 20px;
   line-height: 1;
+}
+
+.notice-warning {
+  border-color: #fcd34d;
+  border-left-color: #d97706;
+  background: #fffbeb;
+  color: #78350f;
+}
+
+.notice-warning::before {
+  content: '!';
 }
